@@ -65,6 +65,8 @@ server.listen(8000, "127.0.0.1", () => {
 
 */
 
+/*
+
 // A very simple API
 const http = require("http");
 const url = require("url");
@@ -91,6 +93,39 @@ const server = http.createServer((req, res) => {
       "content-type": "text/html",
     });
     res.end(overviewSite);
+  } else if (path === "/product") res.end("This is the product");
+  else if (path === "/api") {
+    res.writeHead("200", {
+      "Content-type": "application/json",
+    });
+    res.end(apiData);
+  } else
+    res.writeHead("404", {
+      "content-type": "text/html",
+      "my-own-header": "hello-world",
+    }),
+      res.end("<h1>Page not found</h1>");
+});
+
+server.listen(8000, "127.0.0.1");
+
+*/
+
+//HTML Templating: Building the templates
+const http = require("http");
+const url = require("url");
+const fs = require("fs");
+
+const apiData = fs.readFileSync("dev-data/data.json", "utf-8", (err, data) => {
+  data = JSON.parse(data);
+  return data;
+});
+
+const server = http.createServer((req, res) => {
+  const path = req.url;
+
+  if (path === "/overview" || path === "/") {
+    res.end("This is the overview");
   } else if (path === "/product") res.end("This is the product");
   else if (path === "/api") {
     res.writeHead("200", {
