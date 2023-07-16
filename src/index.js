@@ -1,9 +1,9 @@
 /*
 
-//Using file system package
+// Using file system package
 const fs = require("fs");
 
-//Bloking, synchronous way
+// Bloking, synchronous way
 console.log(fs.readFileSync("txt/input.txt", "utf-8"));
 
 const text = `This is what we know about avocade: ${fs.readFileSync(
@@ -27,7 +27,7 @@ fs.readFile("txt/start.txt", "utf-8", (err, file) => {
 
 /*
 
-//Using http module for server
+// Using http module for server
 const http = require("http");
 
 const server = http.createServer((req, res) => {
@@ -40,7 +40,9 @@ server.listen(8000, "127.0.0.1", () => {
 
 */
 
-//Routing pages for urls
+/*
+
+// Routing pages for urls
 const http = require("http");
 const url = require("url");
 
@@ -60,3 +62,47 @@ const server = http.createServer((req, res) => {
 server.listen(8000, "127.0.0.1", () => {
   console.log("Listening from server");
 });
+
+*/
+
+// A very simple API
+const http = require("http");
+const url = require("url");
+const fs = require("fs");
+
+const overviewSite = fs.readFileSync(
+  "templates/overview.html",
+  "utf-8",
+  (err, data) => {
+    return data;
+  }
+);
+
+const apiData = fs.readFileSync("dev-data/data.json", "utf-8", (err, data) => {
+  data = JSON.parse(data);
+  return data;
+});
+
+const server = http.createServer((req, res) => {
+  const path = req.url;
+
+  if (path === "/overview" || path === "/") {
+    res.writeHead("200 ", {
+      "content-type": "text/html",
+    });
+    res.end(overviewSite);
+  } else if (path === "/product") res.end("This is the product");
+  else if (path === "/api") {
+    res.writeHead("200", {
+      "Content-type": "application/json",
+    });
+    res.end(apiData);
+  } else
+    res.writeHead("404", {
+      "content-type": "text/html",
+      "my-own-header": "hello-world",
+    }),
+      res.end("<h1>Page not found</h1>");
+});
+
+server.listen(8000, "127.0.0.1");
