@@ -115,7 +115,7 @@ server.listen(8000, "127.0.0.1");
 
 /*
 
-//HTML Templating: Building the templates
+// HTML Templating: Building the templates
 const http = require("http");
 const url = require("url");
 const fs = require("fs");
@@ -148,7 +148,9 @@ server.listen(8000, "127.0.0.1");
 
 */
 
-//HTML Templating: Filling the templates
+/*
+
+// HTML Templating: Filling the templates
 const http = require("http");
 const url = require("url");
 const fs = require("fs");
@@ -182,6 +184,60 @@ const server = http.createServer((req, res) => {
     res.end(output);
   } else if (path === "/product") res.end("This is the product");
   else if (path === "/api") {
+    res.writeHead("200", {
+      "Content-type": "application/json",
+    });
+    res.end(apiData);
+  } else
+    res.writeHead("404", {
+      "content-type": "text/html",
+      "my-own-header": "hello-world",
+    }),
+      res.end("<h1>Page not found</h1>");
+});
+
+server.listen(8000, "127.0.0.1");
+
+*/
+
+// Parsing Variables from URL
+const http = require("http");
+const url = require("url");
+const fs = require("fs");
+
+const replaceTemplate = (temp, product) => {
+  let output = temp.replace(/{%PRODUCTNAME%}/g, product.productName);
+  output = output.replace(/{%IMAGE%}/g, product.image);
+  output = output.replace(/{%PRICE%}/g, product.price);
+  output = output.replace(/{%QUANTITY%}/g, product.quantity);
+  output = output.replace(/{%DESCRIPTION%}/g, product.description);
+  output = output.replace(/{%ID%}/g, product.id);
+  output = output.replace(/{%FROM%}/g, product.from);
+  output = output.replace(/{%VITAMINS%}/g, product.vitamins);
+  if (!product.organic) output = output.replace(/{%ORGANIC%}/g, "not-organic");
+  return output;
+};
+
+const tempOverview = fs.readFileSync("templates/template-overview.html", "utf-8");
+const tempProduct = fs.readFileSync("templates/template-product.html", "utf-8");
+const tempCard = fs.readFileSync("templates/template-card.html", "utf-8");
+
+const apiData = fs.readFileSync("dev-data/data.json", "utf-8");
+
+const parsedData = JSON.parse(apiData);
+
+const server = http.createServer((req, res) => {
+  const path = url.parse(req.url);
+  if (path.pathname === "/overview" || path.pathname === "/") {
+    res.writeHead(200, { "Content-type": "text/html" });
+    const cardsHtml = parsedData.map((element) => replaceTemplate(tempCard, element)).join("");
+    const output = tempOverview.replace("{%PRODUCTS_CARDS%}", cardsHtml);
+    res.end(output);
+  } else if (path.pathname === "/product") {
+    res.writeHead("200", { "Content-type": "text/html" });
+    const output = replaceTemplate(tempProduct, parsedData[path.query.slice(-1)]);
+    res.end(output);
+  } else if (path.pathname === "/api") {
     res.writeHead("200", {
       "Content-type": "application/json",
     });
