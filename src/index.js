@@ -218,11 +218,11 @@ const replaceTemplate = (temp, product) => {
   return output;
 };
 
-const tempOverview = fs.readFileSync("templates/template-overview.html", "utf-8");
-const tempProduct = fs.readFileSync("templates/template-product.html", "utf-8");
-const tempCard = fs.readFileSync("templates/template-card.html", "utf-8");
+const tempOverview = fs.readFileSync(`${__dirname}/templates/template-overview.html`, "utf-8");
+const tempProduct = fs.readFileSync(`${__dirname}/templates/template-product.html`, "utf-8");
+const tempCard = fs.readFileSync(`${__dirname}/templates/template-card.html`, "utf-8");
 
-const apiData = fs.readFileSync("dev-data/data.json", "utf-8");
+const apiData = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
 
 const parsedData = JSON.parse(apiData);
 
